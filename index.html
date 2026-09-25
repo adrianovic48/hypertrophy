@@ -1,1 +1,187 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Hypertrophy V7</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-slate-950 text-white"><div id="app"></div><script>const R={lunes:[["Press banca","20 kg","4x6-8",180],["Press militar","12.5 kg","3x8-10",90],["Press inclinado","17.5 kg","3x10-12",90],["Laterales","7.5 kg","3x12-15",60],["Triceps","20 kg","3x12-15",60]],martes:[["Dominadas","BW","4x6-10",180],["Remo barra","-","3x8-10",90],["Remo polea","60 kg","3x10-12",90],["Face pull","15 kg","3x15",60],["Curl Z","10 kg","3x10-12",60]],miercoles:[["Hack squat","10 kg","4x6-8",180],["Hip thrust","10 kg","3x10-12",90],["Prensa","80 kg","3x10-12",90],["Femoral","30 kg","3x12-15",60],["Gemelos","-","3x15-20",45]],viernes:[["Cruce poleas","7.5 kg","3x12-15",60],["Arnold","15 kg","3x10-12",90],["Laterales","7.5 kg","3x15",60],["Pajaros","10 kg","3x15",60],["Curl inclinado","10 kg","3x10-12",60],["Triceps","17 kg","3x12-15",60]]};let day=localStorage.day||'lunes';let sessions=+localStorage.sessions||0;const app=document.getElementById('app');function nav(s){document.querySelectorAll('.screen').forEach(x=>x.classList.add('hidden'));document.getElementById(s).classList.remove('hidden');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('text-white'));document.querySelector('[data='+s+']').classList.add('text-white')}function render(){const save=JSON.parse(localStorage['v7_'+day]||'{}');const list=document.getElementById('list');list.innerHTML='';let done=0;R[day].forEach((e,i)=>{if(save['r'+i])done++;list.innerHTML+=`<div class=\"bg-slate-900 rounded-2xl p-4 mb-3\"><div class=\"flex justify-between\"><div><h3 class=font-semibold>${e[0]}</h3><p class=\"text-xs text-slate-400\">${e[1]} · ${e[2]}</p></div><span class=\"text-xs text-blue-400\">${e[3]}s</span></div><div class=\"grid grid-cols-2 gap-2 mt-3\"><input id=\"k${i}\" value=\"${save['k'+i]||e[1].replace(' kg','')}\" class=\"bg-slate-950 rounded-lg p-2\" placeholder=Kg><input id=\"r${i}\" value=\"${save['r'+i]||''}\" class=\"bg-slate-950 rounded-lg p-2\" placeholder=\"8-8-7-6\"></div><button onclick=\"timer(this,${e[3]})\" class=\"w-full bg-blue-600 rounded-xl py-2 mt-3\">Descanso</button></div>`});document.getElementById('counter').textContent=done+'/'+R[day].length;document.getElementById('ses').textContent=sessions}window.timer=(b,s)=>{b.disabled=true;const id=setInterval(()=>{b.innerText='⏳ '+s+'s';if(--s<0){clearInterval(id);b.innerText='✓';b.className='w-full bg-green-600 rounded-xl py-2 mt-3';b.disabled=false}},1000)};app.innerHTML=`<main class=\"max-w-md mx-auto p-4 pb-24\"><section id=home class=screen><div class=\"rounded-3xl p-6 bg-gradient-to-br from-blue-700 to-slate-900\"><p class=\"text-blue-200 text-xs tracking-[0.3em]\">HYPERTROPHY V7</p><h1 class=\"text-4xl font-bold mt-2\">82.0 kg</h1><p class=\"text-slate-300 mt-1\">Objetivo 86 kg · Synergym</p><div class=\"w-full bg-slate-800 rounded-full h-2 mt-4\"><div class=\"bg-green-400 h-2 rounded-full w-1/2\"></div></div></div><div class=\"grid grid-cols-2 gap-3 mt-4\"><div class=\"bg-slate-900 rounded-2xl p-4\"><p class=\"text-slate-400 text-sm\">Racha</p><h2 class=\"text-3xl font-bold\">4 🔥</h2></div><div class=\"bg-slate-900 rounded-2xl p-4\"><p class=\"text-slate-400 text-sm\">PR</p><h2 class=\"text-3xl font-bold\">12 🏆</h2></div></div><button onclick=\"nav('workout')\" class=\"w-full bg-green-500 text-slate-900 font-bold py-3 rounded-xl mt-4\">Empezar entrenamiento</button></section><section id=workout class=\"screen hidden\"><div class=\"flex justify-between items-center mb-3\"><h2 class=\"text-xl font-bold\">Entrenamiento</h2><span id=counter class=text-green-400></span></div><div id=days class=\"flex gap-2 mb-3\"></div><div id=list></div><button onclick=\"save()\" class=\"w-full bg-green-500 text-slate-900 font-bold py-3 rounded-xl\">Guardar sesión</button></section><section id=stats class=\"screen hidden\"><h2 class=\"text-xl font-bold mb-3\">Estadísticas</h2><div class=\"bg-slate-900 rounded-2xl p-4\"><p class=text-slate-400>Sesiones</p><h2 id=ses class=\"text-3xl font-bold\"></h2></div></section><section id=profile class=\"screen hidden\"><div class=\"bg-slate-900 rounded-2xl p-4\"><h2 class=\"text-xl font-bold\">Adrián López</h2><p class=text-slate-400>187 cm · 82 kg</p><div class=\"mt-4 space-y-2\"><div class=\"flex justify-between\"><span>Rutina</span><b>4 días</b></div><div class=\"flex justify-between\"><span>Objetivo</span><b>Hipertrofia</b></div><div class=\"flex justify-between\"><span>Carrera</span><b>Sáb + Dom</b></div></div></div></section></main><nav class=\"fixed bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800\"><div class=\"max-w-md mx-auto grid grid-cols-4 py-3 text-center text-slate-400\"><button class=tab data=home onclick=\"nav('home')\">🏠</button><button class=tab data=workout onclick=\"nav('workout')\">💪</button><button class=tab data=stats onclick=\"nav('stats')\">📈</button><button class=tab data=profile onclick=\"nav('profile')\">👤</button></div></nav>`;const d=document.getElementById('days');['lunes','martes','miercoles','viernes'].forEach(x=>{d.innerHTML+=`<button onclick=\"setDay('${x}')\" id=\"${x}\" class=\"px-3 py-2 rounded-xl bg-slate-800 text-sm\">${x.slice(0,3)}</button>`});window.setDay=x=>{day=x;localStorage.day=x;document.querySelectorAll('#days button').forEach(b=>b.classList.remove('bg-blue-600'));document.getElementById(x).classList.add('bg-blue-600');render()};window.save=()=>{let o={};R[day].forEach((_,i)=>{o['k'+i]=document.getElementById('k'+i).value;o['r'+i]=document.getElementById('r'+i).value});localStorage['v7_'+day]=JSON.stringify(o);localStorage.sessions=++sessions;render();alert('Sesion guardada')};setDay(day);nav('home');</script></body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hypertrophy V7</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#020617;color:white}
+.screen{display:none}
+.active{display:block}
+input{background:#020617;border:1px solid #334155}
+</style>
+</head>
+<body class="max-w-md mx-auto bg-slate-950">
+
+<div id="home" class="screen active p-4 pb-24">
+  <div class="rounded-3xl p-6 bg-gradient-to-br from-blue-700 to-slate-900">
+    <p class="text-blue-200 text-xs tracking-[0.3em]">HYPERTROPHY V7</p>
+    <h1 class="text-4xl font-bold mt-2">82.0 kg</h1>
+    <p class="text-slate-300">Objetivo 86 kg · Synergym</p>
+    <div class="w-full h-2 rounded-full bg-slate-700 mt-4">
+      <div class="h-2 rounded-full bg-green-400 w-1/2"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3 mt-4">
+    <div class="bg-slate-900 rounded-2xl p-4">
+      <p class="text-slate-400 text-sm">Racha</p>
+      <h2 class="text-3xl font-bold">4 🔥</h2>
+    </div>
+    <div class="bg-slate-900 rounded-2xl p-4">
+      <p class="text-slate-400 text-sm">PR</p>
+      <h2 class="text-3xl font-bold">12 🏆</h2>
+    </div>
+  </div>
+
+  <button onclick="openTab('workout')" class="w-full mt-4 bg-green-500 text-slate-900 font-bold py-3 rounded-xl">
+    💪 Empezar entrenamiento
+  </button>
+</div>
+
+<div id="workout" class="screen p-4 pb-24">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold">Lunes · Empuje</h2>
+    <span id="counter" class="text-green-400">0/17</span>
+  </div>
+
+  <div id="list"></div>
+
+  <button onclick="saveWorkout()" class="w-full bg-green-500 text-slate-900 font-bold py-3 rounded-xl mt-4">
+    Guardar sesión
+  </button>
+</div>
+
+<div id="stats" class="screen p-4 pb-24">
+  <h2 class="text-xl font-bold mb-4">Estadísticas</h2>
+
+  <div class="bg-slate-900 rounded-2xl p-4">
+    <p class="text-slate-400">Sesiones</p>
+    <h2 id="sessions" class="text-4xl font-bold">0</h2>
+  </div>
+
+  <div class="bg-slate-900 rounded-2xl p-4 mt-4">
+    <p class="text-slate-400 mb-3">Progresión banca</p>
+    <svg viewBox="0 0 300 120" class="w-full">
+      <polyline fill="none" stroke="#22c55e" stroke-width="4"
+        points="20,90 60,82 100,70 140,58 180,48 220,36 280,20"/>
+      <g fill="#22c55e">
+        <circle cx="20" cy="90" r="4"/>
+        <circle cx="60" cy="82" r="4"/>
+        <circle cx="100" cy="70" r="4"/>
+        <circle cx="140" cy="58" r="4"/>
+        <circle cx="180" cy="48" r="4"/>
+        <circle cx="220" cy="36" r="4"/>
+        <circle cx="280" cy="20" r="4"/>
+      </g>
+    </svg>
+  </div>
+</div>
+
+<div id="profile" class="screen p-4 pb-24">
+  <div class="bg-slate-900 rounded-2xl p-4">
+    <h2 class="text-2xl font-bold">Adrián López</h2>
+    <p class="text-slate-400">187 cm · 82 kg</p>
+
+    <div class="mt-4 space-y-2">
+      <div class="flex justify-between"><span>Rutina</span><b>4 días</b></div>
+      <div class="flex justify-between"><span>Objetivo</span><b>Hipertrofia</b></div>
+      <div class="flex justify-between"><span>Carrera</span><b>Sáb + Dom</b></div>
+    </div>
+  </div>
+</div>
+
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800">
+  <div class="max-w-md mx-auto grid grid-cols-4 text-center py-3">
+    <button onclick="openTab('home')">🏠</button>
+    <button onclick="openTab('workout')">💪</button>
+    <button onclick="openTab('stats')">📈</button>
+    <button onclick="openTab('profile')">👤</button>
+  </div>
+</nav>
+
+<script>
+const exercises=[
+["Press banca","20",4],
+["Press militar","12.5",3],
+["Press inclinado","17.5",3],
+["Laterales","7.5",3],
+["Tríceps","20",3]
+];
+
+function render(){
+ const list=document.getElementById("list");
+ list.innerHTML="";
+ let done=0;
+
+ exercises.forEach((e,i)=>{
+  let sets="";
+  for(let s=1;s<=e[2];s++){
+    const k=`e${i}k${s}`;
+    const r=`e${i}r${s}`;
+    const kg=localStorage[k]||e[1];
+    const rep=localStorage[r]||"";
+    if(rep) done++;
+
+    sets+=`
+    <div class="grid grid-cols-2 gap-2 mb-2">
+      <input id="${k}" value="${kg}" class="rounded-lg p-2" placeholder="Kg">
+      <input id="${r}" value="${rep}" class="rounded-lg p-2" placeholder="Reps">
+    </div>`;
+  }
+
+  list.innerHTML+=`
+  <div class="bg-slate-900 rounded-2xl p-4 mb-3">
+    <div class="flex justify-between mb-3">
+      <div>
+        <h3 class="font-semibold">${e[0]}</h3>
+        <p class="text-xs text-slate-400">${e[1]} kg · ${e[2]} series</p>
+      </div>
+      <button onclick="timer(this,90)" class="bg-blue-600 px-3 rounded-full text-xs">
+        90 s
+      </button>
+    </div>
+    ${sets}
+  </div>`;
+ });
+
+ document.getElementById("counter").innerText=`${done}/17`;
+ document.getElementById("sessions").innerText=localStorage.sessions||0;
+}
+
+function timer(btn,t){
+ btn.disabled=true;
+ const id=setInterval(()=>{
+   btn.innerText=t+"s";
+   t--;
+   if(t<0){
+     clearInterval(id);
+     btn.innerText="✓";
+     btn.className="bg-green-600 px-3 rounded-full text-xs";
+     btn.disabled=false;
+   }
+ },1000);
+}
+
+function saveWorkout(){
+ exercises.forEach((e,i)=>{
+   for(let s=1;s<=e[2];s++){
+     localStorage[`e${i}k${s}`]=document.getElementById(`e${i}k${s}`).value;
+     localStorage[`e${i}r${s}`]=document.getElementById(`e${i}r${s}`).value;
+   }
+ });
+ localStorage.sessions=(+localStorage.sessions||0)+1;
+ alert("Sesión guardada");
+ render();
+}
+
+function openTab(id){
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+ document.getElementById(id).classList.add("active");
+}
+
+render();
+</script>
+</body>
+</html>
